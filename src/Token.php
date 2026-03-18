@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Doctrine\Common\Lexer;
 
-use UnitEnum;
-
 use function in_array;
+
+use UnitEnum;
 
 /**
  * @template T of UnitEnum|string|int
@@ -37,8 +37,7 @@ final class Token
          * @readonly
          */
         public int $position
-    )
-    {
+    ) {
     }
 
     /** @param T ...$types */

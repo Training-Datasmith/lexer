@@ -4,19 +4,23 @@ declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\Lexer;
 
-use Doctrine\Common\Lexer\AbstractLexer;
-use Doctrine\Common\Lexer\Token;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
-
 use function array_map;
 use function assert;
 use function count;
+
+use Doctrine\Common\Lexer\AbstractLexer;
+
+use Doctrine\Common\Lexer\Token;
+
 use function is_int;
 use function is_numeric;
-use function setlocale;
 
 use const LC_ALL;
+
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
+
+use function setlocale;
 
 class AbstractLexerTest extends TestCase
 {

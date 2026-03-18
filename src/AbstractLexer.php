@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Doctrine\Common\Lexer;
 
-use ReflectionClass;
-use UnitEnum;
-
 use function implode;
 use function preg_split;
-use function sprintf;
-use function substr;
 
 use const PREG_SPLIT_DELIM_CAPTURE;
 use const PREG_SPLIT_NO_EMPTY;
 use const PREG_SPLIT_OFFSET_CAPTURE;
+
+use ReflectionClass;
+
+use function sprintf;
+use function substr;
+
+use UnitEnum;
 
 /**
  * Base class for writing simple lexers, i.e. for creating small DSLs.
