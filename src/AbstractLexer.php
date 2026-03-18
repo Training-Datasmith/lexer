@@ -51,14 +51,14 @@ abstract class AbstractLexer
      *
      * @var Token<T, V>|null
      */
-    public Token|null $lookahead;
+    public Token|null $lookahead = null;
 
     /**
      * The last matched/seen token.
      *
      * @var Token<T, V>|null
      */
-    public Token|null $token;
+    public Token|null $token = null;
 
     /**
      * Composed regex for input parsing.
@@ -74,10 +74,8 @@ abstract class AbstractLexer
      * Any unprocessed tokens from any previous input are lost.
      *
      * @param string $input The input to be tokenized.
-     *
-     * @return void
      */
-    public function setInput(string $input)
+    public function setInput(string $input): void
     {
         $this->input  = $input;
         $this->tokens = [];
@@ -88,10 +86,8 @@ abstract class AbstractLexer
 
     /**
      * Resets the lexer.
-     *
-     * @return void
      */
-    public function reset()
+    public function reset(): void
     {
         $this->lookahead = null;
         $this->token     = null;
@@ -101,10 +97,8 @@ abstract class AbstractLexer
 
     /**
      * Resets the peek pointer to 0.
-     *
-     * @return void
      */
-    public function resetPeek()
+    public function resetPeek(): void
     {
         $this->peek = 0;
     }
@@ -113,10 +107,8 @@ abstract class AbstractLexer
      * Resets the lexer position on the input to the given position.
      *
      * @param int $position Position to place the lexical scanner.
-     *
-     * @return void
      */
-    public function resetPosition(int $position = 0)
+    public function resetPosition(int $position = 0): void
     {
         $this->position = $position;
     }
@@ -181,10 +173,8 @@ abstract class AbstractLexer
      * Tells the lexer to skip input tokens until it sees a token with the given value.
      *
      * @param T $type The token type to skip until.
-     *
-     * @return void
      */
-    public function skipUntil(int|string|UnitEnum $type)
+    public function skipUntil(int|string|UnitEnum $type): void
     {
         while ($this->lookahead !== null && ! $this->lookahead->isA($type)) {
             $this->moveNext();
