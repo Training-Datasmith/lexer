@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\Lexer;
 
-use Doctrine\Common\Lexer\AbstractLexer;
+use Doctrine\Common\Lexer\Abstract_Lexer;
 
 use function in_array;
 use function is_numeric;
 
-/** @extends AbstractLexer<TokenType, string|int> */
-class EnumLexer extends AbstractLexer
+/** @extends Abstract_Lexer<Token_Type, string|int> */
+class Enum_Lexer extends Abstract_Lexer
 {
     /**
      * {@inheritDoc}
      */
-    protected function getCatchablePatterns(): array
+    protected function get_catchable_patterns(): array
     {
         return [
             '=|<|>',
@@ -27,7 +27,7 @@ class EnumLexer extends AbstractLexer
     /**
      * {@inheritDoc}
      */
-    protected function getNonCatchablePatterns(): array
+    protected function get_non_catchable_patterns(): array
     {
         return [
             '\s+',
@@ -35,18 +35,18 @@ class EnumLexer extends AbstractLexer
         ];
     }
 
-    protected function getType(string &$value): TokenType
+    protected function get_type(string &$value): Token_Type
     {
         if (is_numeric($value)) {
             $value = (int) $value;
 
-            return TokenType::INT;
+            return Token_Type::INT;
         }
 
         if (in_array($value, ['=', '<', '>'])) {
-            return TokenType::OPERATOR;
+            return Token_Type::OPERATOR;
         }
 
-        return TokenType::STRING;
+        return Token_Type::STRING;
     }
 }

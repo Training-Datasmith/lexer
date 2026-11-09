@@ -4,36 +4,36 @@ declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\Lexer;
 
-use Doctrine\Common\Lexer\AbstractLexer;
+use Doctrine\Common\Lexer\Abstract_Lexer;
 
-/** @extends AbstractLexer<int, string> */
-class MutableLexer extends AbstractLexer
+/** @extends Abstract_Lexer<int, string> */
+class Mutable_Lexer extends Abstract_Lexer
 {
     /** @var string[] */
-    private array $catchablePatterns = [];
+    private array $catchable_patterns = [];
 
-    public function addCatchablePattern(string $pattern): void
+    public function add_catchable_pattern(string $pattern): void
     {
-        $this->catchablePatterns[] = $pattern;
+        $this->catchable_patterns[] = $pattern;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function getCatchablePatterns(): array
+    protected function get_catchable_patterns(): array
     {
-        return $this->catchablePatterns;
+        return $this->catchable_patterns;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function getNonCatchablePatterns(): array
+    protected function get_non_catchable_patterns(): array
     {
         return ['[\s,]+'];
     }
 
-    protected function getType(string &$value): int
+    protected function get_type(string &$value): int
     {
         return 1;
     }

@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\Lexer;
 
-use Doctrine\Common\Lexer\AbstractLexer;
+use Doctrine\Common\Lexer\Abstract_Lexer;
 
 use function in_array;
 use function is_numeric;
 
-/** @extends AbstractLexer<string, string|int> */
-class ConcreteLexer extends AbstractLexer
+/** @extends Abstract_Lexer<string, string|int> */
+class Concrete_Lexer extends Abstract_Lexer
 {
     final public const INT = 'int';
 
     /**
      * {@inheritDoc}
      */
-    protected function getCatchablePatterns(): array
+    protected function get_catchable_patterns(): array
     {
         return [
             '=|<|>',
@@ -29,7 +29,7 @@ class ConcreteLexer extends AbstractLexer
     /**
      * {@inheritDoc}
      */
-    protected function getNonCatchablePatterns(): array
+    protected function get_non_catchable_patterns(): array
     {
         return [
             '\s+',
@@ -37,7 +37,7 @@ class ConcreteLexer extends AbstractLexer
         ];
     }
 
-    protected function getType(string|int|float &$value): string
+    protected function get_type(string|int|float &$value): string
     {
         if (is_numeric($value)) {
             $value = (int) $value;

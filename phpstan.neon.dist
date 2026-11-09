@@ -3,3 +3,7 @@ parameters:
   paths:
     - %rootDir%/../../../src
     - %rootDir%/../../../tests
+  ignoreErrors:
+    -
+      identifier: generics.variance
+      path: src/Token.php

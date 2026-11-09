@@ -9,9 +9,9 @@ like the following:
 
     <?php
 
-    use Doctrine\Common\Lexer\AbstractLexer;
+    use Doctrine\Common\Lexer\Abstract_Lexer;
 
-    class Lexer extends AbstractLexer
+    class Lexer extends Abstract_Lexer
     {
         // All tokens that are not valid identifiers must be < 100
         public const T_NONE              = 1;
@@ -105,13 +105,13 @@ like the following:
          */
         public function __construct(string $input)
         {
-            $this->setInput($input);
+            $this->set_input($input);
         }
 
         /**
          * {@inheritdoc}
          */
-        protected function getCatchablePatterns(): array
+        protected function get_catchable_patterns(): array
         {
             return [
                 '[a-z_][a-z0-9_]*\:[a-z_][a-z0-9_]*(?:\\\[a-z_][a-z0-9_]*)*', // aliased name
@@ -125,7 +125,7 @@ like the following:
         /**
          * {@inheritdoc}
          */
-        protected function getNonCatchablePatterns(): array
+        protected function get_non_catchable_patterns(): array
         {
             return ['\s+', '(.)'];
         }
@@ -133,7 +133,7 @@ like the following:
         /**
          * {@inheritdoc}
          */
-        protected function getType(&$value): int
+        protected function get_type(&$value): int
         {
             $type = self::T_NONE;
 
@@ -235,7 +235,7 @@ Lexer implementation:
         public function __construct(string $dql)
         {
             $this->lexer = new Lexer();
-            $this->lexer->setInput($dql);
+            $this->lexer->set_input($dql);
         }
 
         // ...
@@ -252,7 +252,7 @@ Lexer implementation:
 
         public function QueryLanguage(): AST\SelectStatement|AST\UpdateStatement|AST\DeleteStatement
         {
-            $this->lexer->moveNext();
+            $this->lexer->move_next();
 
             switch ($this->lexer->lookahead->type) {
                 case Lexer::T_SELECT:

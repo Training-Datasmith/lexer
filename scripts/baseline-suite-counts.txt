@@ -1,0 +1,4 @@
+# Pre-ai-training rename baseline (commit 05d3562, parent of 502f662).
+# Verified via PHPUnit 10.5.x on PHP 8.1.34 in docker/system-test image.
+tests=17
+assertions=90

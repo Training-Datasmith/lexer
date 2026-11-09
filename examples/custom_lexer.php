@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Example: building a simple SQL-like lexer using Doctrine AbstractLexer.
+ * Example: building a simple arithmetic lexer using Doctrine Abstract_Lexer.
  *
  * Run from the lexer project root:
  *   php examples/custom_lexer.php
@@ -11,12 +11,12 @@ declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Doctrine\Common\Lexer\AbstractLexer;
+use Doctrine\Common\Lexer\Abstract_Lexer;
 
 /**
  * A minimal lexer for a simple arithmetic DSL: numbers, +, -, *, /, and identifiers.
  */
-class ArithmeticLexer extends AbstractLexer
+class Arithmetic_Lexer extends Abstract_Lexer
 {
     public const T_NONE       = 'T_NONE';
     public const T_NUMBER     = 'T_NUMBER';
@@ -26,25 +26,26 @@ class ArithmeticLexer extends AbstractLexer
     public const T_DIVIDE     = 'T_DIVIDE';
     public const T_IDENTIFIER = 'T_IDENTIFIER';
 
-    protected function getCatchablePatterns(): array
+    protected function get_catchable_patterns(): array
     {
         return [
-            '[0-9]+(?:\.[0-9]+)?', // numbers
-            '[a-zA-Z_][a-zA-Z0-9_]*', // identifiers
-            '[+\-*/]', // operators
+            '[0-9]+(?:\.[0-9]+)?',
+            '[a-zA-Z_][a-zA-Z0-9_]*',
+            '[+\-*/]',
         ];
     }
 
-    protected function getNonCatchablePatterns(): array
+    protected function get_non_catchable_patterns(): array
     {
-        return ['\s+']; // whitespace
+        return ['\s+'];
     }
 
-    protected function getType(&$value): string
+    protected function get_type(&$value): string
     {
         if (is_numeric($value)) {
             return self::T_NUMBER;
         }
+
         return match ($value) {
             '+'     => self::T_PLUS,
             '-'     => self::T_MINUS,
@@ -55,10 +56,10 @@ class ArithmeticLexer extends AbstractLexer
     }
 }
 
-$lexer = new ArithmeticLexer();
-$lexer->setInput('x + 3.14 * y - 1');
+$lexer = new Arithmetic_Lexer();
+$lexer->set_input('x + 3.14 * y - 1');
 
-while ($lexer->moveNext()) {
+while ($lexer->move_next()) {
     $token = $lexer->token;
-    printf("Type: %-12s  Value: %s\n", $token->type, $token->value);
+    printf("Type: %-12s  Value: %s\n", (string) $token->type, (string) $token->value);
 }

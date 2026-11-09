@@ -10,13 +10,13 @@ awareness about deprecated code.
 
 `Doctrine\Common\Lexer\Token` no longer implements `ArrayAccess`.
 Parameter type declarations have been added to
-`Doctrine\Common\Lexer\AbstractLexer` and `Doctrine\Common\Lexer\Token`.
+`Doctrine\Common\Lexer\Abstract_Lexer` and `Doctrine\Common\Lexer\Token`.
 You should add both parameter type declarations and return type declarations to
 your lexers, based on the `@return` phpdoc.
 
 # Upgrade to 2.0.0
 
-`AbstractLexer::glimpse()` and `AbstractLexer::peek()` now return
+`Abstract_Lexer::glimpse()` and `Abstract_Lexer::peek()` now return
 instances of `Doctrine\Common\Lexer\Token`, which is an array-like class
 Using it as an array is deprecated in favor of using properties of that class.
 Using `count()` on it is deprecated with no replacement.

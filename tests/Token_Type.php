@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\Lexer;
 
-enum TokenType
+enum Token_Type
 {
     case INT;
     case OPERATOR;

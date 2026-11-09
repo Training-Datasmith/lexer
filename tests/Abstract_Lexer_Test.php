@@ -4,31 +4,27 @@ declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\Lexer;
 
-use function array_map;
-use function assert;
-use function count;
-
-use Doctrine\Common\Lexer\AbstractLexer;
-
+use Doctrine\Common\Lexer\Abstract_Lexer;
 use Doctrine\Common\Lexer\Token;
-
-use function is_int;
-use function is_numeric;
-
-use const LC_ALL;
-
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+use function array_map;
+use function assert;
+use function count;
+use function is_int;
+use function is_numeric;
 use function setlocale;
 
-class AbstractLexerTest extends TestCase
+use const LC_ALL;
+
+class Abstract_Lexer_Test extends TestCase
 {
-    private ConcreteLexer $concreteLexer;
+    private Concrete_Lexer $concrete_lexer;
 
     public function setUp(): void
     {
-        $this->concreteLexer = new ConcreteLexer();
+        $this->concrete_lexer = new Concrete_Lexer();
     }
 
     public function tearDown(): void
@@ -37,7 +33,7 @@ class AbstractLexerTest extends TestCase
     }
 
     /** @phpstan-return list<array{string, list<Token<string, string|int>>}> */
-    public static function dataProvider(): array
+    public static function data_provider(): array
     {
         return [
             [
@@ -51,251 +47,251 @@ class AbstractLexerTest extends TestCase
         ];
     }
 
-    public function testResetPeek(): void
+    public function test_reset_peek(): void
     {
-        $expectedTokens = [
+        $expected_tokens = [
             new Token('price', 'string', 0),
             new Token('=', 'operator', 5),
             new Token(10, 'int', 6),
         ];
 
-        $this->concreteLexer->setInput('price=10');
+        $this->concrete_lexer->set_input('price=10');
 
-        $this->assertEquals($expectedTokens[0], $this->concreteLexer->peek());
-        $this->assertEquals($expectedTokens[1], $this->concreteLexer->peek());
-        $this->concreteLexer->resetPeek();
-        $this->assertEquals($expectedTokens[0], $this->concreteLexer->peek());
+        $this->assertEquals($expected_tokens[0], $this->concrete_lexer->peek());
+        $this->assertEquals($expected_tokens[1], $this->concrete_lexer->peek());
+        $this->concrete_lexer->reset_peek();
+        $this->assertEquals($expected_tokens[0], $this->concrete_lexer->peek());
     }
 
-    public function testResetPosition(): void
+    public function test_reset_position(): void
     {
-        $expectedTokens = [
+        $expected_tokens = [
             new Token('price', 'string', 0),
             new Token('=', 'operator', 5),
             new Token(10, 'int', 6),
         ];
 
-        $this->concreteLexer->setInput('price=10');
-        $this->assertNull($this->concreteLexer->lookahead);
+        $this->concrete_lexer->set_input('price=10');
+        $this->assertNull($this->concrete_lexer->lookahead);
 
-        $this->assertTrue($this->concreteLexer->moveNext());
-        $this->assertEquals($expectedTokens[0], $this->concreteLexer->lookahead);
+        $this->assertTrue($this->concrete_lexer->move_next());
+        $this->assertEquals($expected_tokens[0], $this->concrete_lexer->lookahead);
 
-        $this->assertTrue($this->concreteLexer->moveNext());
-        $this->assertEquals($expectedTokens[1], $this->concreteLexer->lookahead);
+        $this->assertTrue($this->concrete_lexer->move_next());
+        $this->assertEquals($expected_tokens[1], $this->concrete_lexer->lookahead);
 
-        $this->concreteLexer->resetPosition(0);
+        $this->concrete_lexer->reset_position(0);
 
-        $this->assertTrue($this->concreteLexer->moveNext());
-        $this->assertEquals($expectedTokens[0], $this->concreteLexer->lookahead);
+        $this->assertTrue($this->concrete_lexer->move_next());
+        $this->assertEquals($expected_tokens[0], $this->concrete_lexer->lookahead);
     }
 
-    /** @phpstan-param list<Token<string, string|int>>  $expectedTokens */
-    #[DataProvider('dataProvider')]
-    public function testMoveNext(string $input, array $expectedTokens): void
+    /** @phpstan-param list<Token<string, string|int>>  $expected_tokens */
+    #[DataProvider('data_provider')]
+    public function test_move_next(string $input, array $expected_tokens): void
     {
-        $this->concreteLexer->setInput($input);
-        $this->assertNull($this->concreteLexer->lookahead);
+        $this->concrete_lexer->set_input($input);
+        $this->assertNull($this->concrete_lexer->lookahead);
 
-        for ($i = 0; $i < count($expectedTokens); $i++) {
-            $this->assertTrue($this->concreteLexer->moveNext());
-            $this->assertEquals($expectedTokens[$i], $this->concreteLexer->lookahead);
+        for ($i = 0; $i < count($expected_tokens); $i++) {
+            $this->assertTrue($this->concrete_lexer->move_next());
+            $this->assertEquals($expected_tokens[$i], $this->concrete_lexer->lookahead);
         }
 
-        $this->assertFalse($this->concreteLexer->moveNext());
-        $this->assertNull($this->concreteLexer->lookahead);
+        $this->assertFalse($this->concrete_lexer->move_next());
+        $this->assertNull($this->concrete_lexer->lookahead);
     }
 
-    public function testSkipUntil(): void
+    public function test_skip_until(): void
     {
-        $this->concreteLexer->setInput('price=10');
+        $this->concrete_lexer->set_input('price=10');
 
-        $this->assertTrue($this->concreteLexer->moveNext());
-        $this->concreteLexer->skipUntil('operator');
+        $this->assertTrue($this->concrete_lexer->move_next());
+        $this->concrete_lexer->skip_until('operator');
 
         $this->assertEquals(
             new Token('=', 'operator', 5),
-            $this->concreteLexer->lookahead,
+            $this->concrete_lexer->lookahead,
         );
     }
 
-    public function testUtf8Mismatch(): void
+    public function test_utf8_mismatch(): void
     {
-        $this->concreteLexer->setInput("\xE9=10");
+        $this->concrete_lexer->set_input("\xE9=10");
 
-        $this->assertTrue($this->concreteLexer->moveNext());
+        $this->assertTrue($this->concrete_lexer->move_next());
 
         $this->assertEquals(
             new Token("\xE9=10", 'string', 0),
-            $this->concreteLexer->lookahead,
+            $this->concrete_lexer->lookahead,
         );
     }
 
-    /** @phpstan-param list<Token<string, string|int>> $expectedTokens */
-    #[DataProvider('dataProvider')]
-    public function testPeek(string $input, array $expectedTokens): void
+    /** @phpstan-param list<Token<string, string|int>> $expected_tokens */
+    #[DataProvider('data_provider')]
+    public function test_peek(string $input, array $expected_tokens): void
     {
-        $this->concreteLexer->setInput($input);
-        foreach ($expectedTokens as $expectedToken) {
-            $actualToken = $this->concreteLexer->peek();
-            assert($actualToken !== null);
-            $this->assertEquals($expectedToken, $actualToken);
-            $this->assertSame($expectedToken->value, $actualToken->value);
-            $this->assertSame($expectedToken->type, $actualToken->type);
-            $this->assertSame($expectedToken->position, $actualToken->position);
+        $this->concrete_lexer->set_input($input);
+        foreach ($expected_tokens as $expected_token) {
+            $actual_token = $this->concrete_lexer->peek();
+            assert($actual_token !== null);
+            $this->assertEquals($expected_token, $actual_token);
+            $this->assertSame($expected_token->value, $actual_token->value);
+            $this->assertSame($expected_token->type, $actual_token->type);
+            $this->assertSame($expected_token->position, $actual_token->position);
         }
 
-        $this->assertNull($this->concreteLexer->peek());
+        $this->assertNull($this->concrete_lexer->peek());
     }
 
-    /** @phpstan-param list<Token<string, string|int>> $expectedTokens */
-    #[DataProvider('dataProvider')]
-    public function testGlimpse(string $input, array $expectedTokens): void
+    /** @phpstan-param list<Token<string, string|int>> $expected_tokens */
+    #[DataProvider('data_provider')]
+    public function test_glimpse(string $input, array $expected_tokens): void
     {
-        $this->concreteLexer->setInput($input);
+        $this->concrete_lexer->set_input($input);
 
-        foreach ($expectedTokens as $expectedToken) {
-            $actualToken = $this->concreteLexer->glimpse();
-            assert($actualToken !== null);
-            $this->assertEquals($expectedToken, $actualToken);
-            $this->assertEquals($expectedToken, $this->concreteLexer->glimpse());
-            $this->assertSame($expectedToken->value, $actualToken->value);
-            $this->assertSame($expectedToken->type, $actualToken->type);
-            $this->assertSame($expectedToken->position, $actualToken->position);
-            $this->concreteLexer->moveNext();
+        foreach ($expected_tokens as $expected_token) {
+            $actual_token = $this->concrete_lexer->glimpse();
+            assert($actual_token !== null);
+            $this->assertEquals($expected_token, $actual_token);
+            $this->assertEquals($expected_token, $this->concrete_lexer->glimpse());
+            $this->assertSame($expected_token->value, $actual_token->value);
+            $this->assertSame($expected_token->type, $actual_token->type);
+            $this->assertSame($expected_token->position, $actual_token->position);
+            $this->concrete_lexer->move_next();
         }
 
-        $this->assertNull($this->concreteLexer->peek());
+        $this->assertNull($this->concrete_lexer->peek());
     }
 
     /** @phpstan-return list<array{string, int, string}> */
-    public static function inputUntilPositionDataProvider(): array
+    public static function input_until_position_data_provider(): array
     {
         return [
             ['price=10', 5, 'price'],
         ];
     }
 
-    #[DataProvider('inputUntilPositionDataProvider')]
-    public function testGetInputUntilPosition(
+    #[DataProvider('input_until_position_data_provider')]
+    public function test_get_input_until_position(
         string $input,
         int $position,
-        string $expectedInput,
+        string $expected_input,
     ): void {
-        $this->concreteLexer->setInput($input);
+        $this->concrete_lexer->set_input($input);
 
-        $this->assertSame($expectedInput, $this->concreteLexer->getInputUntilPosition($position));
+        $this->assertSame($expected_input, $this->concrete_lexer->get_input_until_position($position));
     }
 
-    /** @phpstan-param list<Token<string, string|int>> $expectedTokens */
-    #[DataProvider('dataProvider')]
-    public function testIsNextToken(string $input, array $expectedTokens): void
+    /** @phpstan-param list<Token<string, string|int>> $expected_tokens */
+    #[DataProvider('data_provider')]
+    public function test_is_next_token(string $input, array $expected_tokens): void
     {
-        $this->concreteLexer->setInput($input);
+        $this->concrete_lexer->set_input($input);
 
-        $this->concreteLexer->moveNext();
-        for ($i = 0; $i < count($expectedTokens); $i++) {
-            assert($expectedTokens[$i]->type !== null);
-            $this->assertTrue($this->concreteLexer->isNextToken($expectedTokens[$i]->type));
-            $this->concreteLexer->moveNext();
+        $this->concrete_lexer->move_next();
+        for ($i = 0; $i < count($expected_tokens); $i++) {
+            assert($expected_tokens[$i]->type !== null);
+            $this->assertTrue($this->concrete_lexer->is_next_token($expected_tokens[$i]->type));
+            $this->concrete_lexer->move_next();
         }
     }
 
-    /** @phpstan-param list<Token<string, string|int>> $expectedTokens */
-    #[DataProvider('dataProvider')]
-    public function testIsNextTokenAny(string $input, array $expectedTokens): void
+    /** @phpstan-param list<Token<string, string|int>> $expected_tokens */
+    #[DataProvider('data_provider')]
+    public function test_is_next_token_any(string $input, array $expected_tokens): void
     {
-        $allTokenTypes = array_map(static function ($token): string {
+        $all_token_types = array_map(static function ($token): string {
             assert($token->type !== null);
 
             return $token->type;
-        }, $expectedTokens);
+        }, $expected_tokens);
 
-        $this->concreteLexer->setInput($input);
+        $this->concrete_lexer->set_input($input);
 
-        $this->concreteLexer->moveNext();
-        for ($i = 0; $i < count($expectedTokens); $i++) {
-            assert($expectedTokens[$i]->type !== null);
-            $this->assertTrue($this->concreteLexer->isNextTokenAny([$expectedTokens[$i]->type]));
-            $this->assertTrue($this->concreteLexer->isNextTokenAny($allTokenTypes));
-            $this->concreteLexer->moveNext();
+        $this->concrete_lexer->move_next();
+        for ($i = 0; $i < count($expected_tokens); $i++) {
+            assert($expected_tokens[$i]->type !== null);
+            $this->assertTrue($this->concrete_lexer->is_next_token_any([$expected_tokens[$i]->type]));
+            $this->assertTrue($this->concrete_lexer->is_next_token_any($all_token_types));
+            $this->concrete_lexer->move_next();
         }
     }
 
-    public function testGetLiteral(): void
+    public function test_get_literal(): void
     {
-        $this->assertSame('Doctrine\Tests\Common\Lexer\ConcreteLexer::INT', $this->concreteLexer->getLiteral('int'));
-        $this->assertSame('fake_token', $this->concreteLexer->getLiteral('fake_token'));
+        $this->assertSame('Doctrine\Tests\Common\Lexer\Concrete_Lexer::INT', $this->concrete_lexer->get_literal('int'));
+        $this->assertSame('fake_token', $this->concrete_lexer->get_literal('fake_token'));
     }
 
-    public function testGetLiteralWithEnumLexer(): void
+    public function test_get_literal_with_enum_lexer(): void
     {
-        $enumLexer = new EnumLexer();
+        $enum_lexer = new Enum_Lexer();
         $this->assertSame(
-            'Doctrine\Tests\Common\Lexer\TokenType::OPERATOR',
-            $enumLexer->getLiteral(TokenType::OPERATOR),
+            'Doctrine\Tests\Common\Lexer\Token_Type::OPERATOR',
+            $enum_lexer->get_literal(Token_Type::OPERATOR),
         );
     }
 
-    public function testIsA(): void
+    public function test_is_a(): void
     {
-        $this->assertTrue($this->concreteLexer->isA('11', 'int'));
-        $this->assertTrue($this->concreteLexer->isA('1.1', 'int'));
-        $this->assertTrue($this->concreteLexer->isA('=', 'operator'));
-        $this->assertTrue($this->concreteLexer->isA('>', 'operator'));
-        $this->assertTrue($this->concreteLexer->isA('<', 'operator'));
-        $this->assertTrue($this->concreteLexer->isA('fake_text', 'string'));
+        $this->assertTrue($this->concrete_lexer->is_a('11', 'int'));
+        $this->assertTrue($this->concrete_lexer->is_a('1.1', 'int'));
+        $this->assertTrue($this->concrete_lexer->is_a('=', 'operator'));
+        $this->assertTrue($this->concrete_lexer->is_a('>', 'operator'));
+        $this->assertTrue($this->concrete_lexer->is_a('<', 'operator'));
+        $this->assertTrue($this->concrete_lexer->is_a('fake_text', 'string'));
     }
 
-    public function testAddCatchablePatternsToMutableLexer(): void
+    public function test_add_catchable_patterns_to_mutable_lexer(): void
     {
-        $mutableLexer = new MutableLexer();
-        $mutableLexer->addCatchablePattern('[a-z]');
-        $mutableLexer->setInput('one');
-        $token = $mutableLexer->glimpse();
+        $mutable_lexer = new Mutable_Lexer();
+        $mutable_lexer->add_catchable_pattern('[a-z]');
+        $mutable_lexer->set_input('one');
+        $token = $mutable_lexer->glimpse();
 
         $this->assertNotNull($token);
         $this->assertEquals('o', $token->value);
 
-        $mutableLexer = new MutableLexer();
-        $mutableLexer->addCatchablePattern('[a-z]+');
-        $mutableLexer->setInput('one');
-        $token = $mutableLexer->glimpse();
+        $mutable_lexer = new Mutable_Lexer();
+        $mutable_lexer->add_catchable_pattern('[a-z]+');
+        $mutable_lexer->set_input('one');
+        $token = $mutable_lexer->glimpse();
 
         $this->assertNotNull($token);
         $this->assertEquals('one', $token->value);
     }
 
-    public function testMarkerAnnotationLocaleTr(): void
+    public function test_marker_annotation_locale_tr(): void
     {
         setlocale(LC_ALL, 'tr_TR.utf8', 'tr_TR');
-        $mutableLexer = new MutableLexer();
-        $mutableLexer->addCatchablePattern('[a-z_\\\][a-z0-9_\:\\\]*[a-z_][a-z0-9_]*');
-        $mutableLexer->addCatchablePattern('(?:[+-]?[0-9]+(?:[\.][0-9]+)*)(?:[eE][+-]?[0-9]+)?');
-        $mutableLexer->addCatchablePattern('"(?:""|[^"])*+"');
-        $mutableLexer->setInput('@ODM\Id');
+        $mutable_lexer = new Mutable_Lexer();
+        $mutable_lexer->add_catchable_pattern('[a-z_\\\][a-z0-9_\:\\\]*[a-z_][a-z0-9_]*');
+        $mutable_lexer->add_catchable_pattern('(?:[+-]?[0-9]+(?:[\.][0-9]+)*)(?:[eE][+-]?[0-9]+)?');
+        $mutable_lexer->add_catchable_pattern('"(?:""|[^"])*+"');
+        $mutable_lexer->set_input('@ODM\Id');
 
-        self::assertNull($mutableLexer->token);
-        self::assertNull($mutableLexer->lookahead);
-        self::assertTrue($mutableLexer->moveNext());
-        self::assertNull($mutableLexer->token);
-        self::assertNotNull($mutableLexer->lookahead);
-        self::assertEquals('@', $mutableLexer->lookahead->value);
-        self::assertTrue($mutableLexer->moveNext());
-        self::assertNotNull($mutableLexer->token);
-        self::assertEquals('@', $mutableLexer->token->value);
-        self::assertEquals('ODM\Id', $mutableLexer->lookahead->value);
+        self::assertNull($mutable_lexer->token);
+        self::assertNull($mutable_lexer->lookahead);
+        self::assertTrue($mutable_lexer->move_next());
+        self::assertNull($mutable_lexer->token);
+        self::assertNotNull($mutable_lexer->lookahead);
+        self::assertEquals('@', $mutable_lexer->lookahead->value);
+        self::assertTrue($mutable_lexer->move_next());
+        self::assertNotNull($mutable_lexer->token);
+        self::assertEquals('@', $mutable_lexer->token->value);
+        self::assertEquals('ODM\Id', $mutable_lexer->lookahead->value);
     }
 
-    public function testCanTokenizeFloatValue(): void
+    public function test_can_tokenize_float_value(): void
     {
-        $lexer = new /** @template-extends AbstractLexer<int, string|int|float|bool> */ class () extends AbstractLexer {
+        $lexer = new /** @template-extends Abstract_Lexer<int, string|int|float|bool> */ class () extends Abstract_Lexer {
             final public const T_NONE    = 1;
             final public const T_INTEGER = 2;
             final public const T_FLOAT   = 4;
             final public const T_BOOL    = 8;
 
-            protected function getType(string|int|float|bool &$value): int
+            protected function get_type(string|int|float|bool &$value): int
             {
                 if ($value === 'y') {
                     $value = true;
@@ -317,7 +313,7 @@ class AbstractLexerTest extends TestCase
             }
 
             /** {@inheritDoc} */
-            protected function getCatchablePatterns(): array
+            protected function get_catchable_patterns(): array
             {
                 return [
                     '(?:[0-9]+)(?:[\.][0-9]+)?(?:e[+-]?[0-9]+)?',
@@ -326,18 +322,18 @@ class AbstractLexerTest extends TestCase
             }
 
             /** {@inheritDoc} */
-            protected function getNonCatchablePatterns(): array
+            protected function get_non_catchable_patterns(): array
             {
                 return ['\s+'];
             }
         };
 
-        $lexer->setInput('123.456');
+        $lexer->set_input('123.456');
         $token = $lexer->peek();
         assert($token !== null);
         self::assertSame(123.456, $token->value, 'expect a real float, not a numerical string');
 
-        $lexer->setInput('y');
+        $lexer->set_input('y');
         $token = $lexer->peek();
         assert($token !== null);
         self::assertTrue($token->value, 'expect a real bool, not a numerical string');

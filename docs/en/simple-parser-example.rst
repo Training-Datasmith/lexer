@@ -1,38 +1,38 @@
 Simple Parser Example
 =====================
 
-Extend the ``Doctrine\Common\Lexer\AbstractLexer`` class and implement
-the ``getCatchablePatterns``, ``getNonCatchablePatterns``, and ``getType``
-methods. Here is a very simple example lexer implementation named ``CharacterTypeLexer``.
+Extend the ``Doctrine\Common\Lexer\Abstract_Lexer`` class and implement
+the ``get_catchable_patterns``, ``get_non_catchable_patterns``, and ``get_type``
+methods. Here is a very simple example lexer implementation named ``Character_Type_Lexer``.
 It tokenizes a string to ``T_UPPER``, ``T_LOWER`` and``T_NUMBER`` tokens:
 
 .. code-block:: php
     <?php
 
-    use Doctrine\Common\Lexer\AbstractLexer;
+    use Doctrine\Common\Lexer\Abstract_Lexer;
 
     /**
-     * @extends AbstractLexer<CharacterTypeLexer::T_*, string>
+     * @extends Abstract_Lexer<Character_Type_Lexer::T_*, string>
      */
-    class CharacterTypeLexer extends AbstractLexer
+    class Character_Type_Lexer extends Abstract_Lexer
     {
         const T_UPPER =  1;
         const T_LOWER =  2;
         const T_NUMBER = 3;
 
-        protected function getCatchablePatterns(): array
+        protected function get_catchable_patterns(): array
         {
             return [
                 '[a-zA-Z0-9]',
             ];
         }
 
-        protected function getNonCatchablePatterns(): array
+        protected function get_non_catchable_patterns(): array
         {
             return [];
         }
 
-        protected function getType(&$value): int
+        protected function get_type(&$value): int
         {
             if (is_numeric($value)) {
                 return self::T_NUMBER;
@@ -48,46 +48,46 @@ It tokenizes a string to ``T_UPPER``, ``T_LOWER`` and``T_NUMBER`` tokens:
         }
     }
 
-Use ``CharacterTypeLexer`` to extract an array of upper case characters:
+Use ``Character_Type_Lexer`` to extract an array of upper case characters:
 
 .. code-block:: php
     <?php
 
-    class UpperCaseCharacterExtracter
+    class Upper_Case_Character_Extracter
     {
-        public function __construct(private CharacterTypeLexer $lexer)
+        public function __construct(private Character_Type_Lexer $lexer)
         {
         }
 
         /** @return list<string> */
-        public function getUpperCaseCharacters(string $string): array
+        public function get_upper_case_characters(string $string): array
         {
-            $this->lexer->setInput($string);
-            $this->lexer->moveNext();
+            $this->lexer->set_input($string);
+            $this->lexer->move_next();
 
-            $upperCaseChars = [];
+            $upper_case_chars = [];
             while (true) {
                 if (!$this->lexer->lookahead) {
                     break;
                 }
 
-                $this->lexer->moveNext();
+                $this->lexer->move_next();
 
-                if ($this->lexer->token->isA(CharacterTypeLexer::T_UPPER)) {
-                    $upperCaseChars[] = $this->lexer->token->value;
+                if ($this->lexer->token->is_a(Character_Type_Lexer::T_UPPER)) {
+                    $upper_case_chars[] = $this->lexer->token->value;
                 }
             }
 
-            return $upperCaseChars;
+            return $upper_case_chars;
         }
     }
 
-    $upperCaseCharacterExtractor = new UpperCaseCharacterExtracter(new CharacterTypeLexer());
-    $upperCaseCharacters = $upperCaseCharacterExtractor->getUpperCaseCharacters('1aBcdEfgHiJ12');
+    $upper_case_character_extractor = new Upper_Case_Character_Extracter(new Character_Type_Lexer());
+    $upper_case_characters = $upper_case_character_extractor->get_upper_case_characters('1aBcdEfgHiJ12');
 
-    print_r($upperCaseCharacters);
+    print_r($upper_case_characters);
 
-The variable ``$upperCaseCharacters`` contains all of the upper case
+The variable ``$upper_case_characters`` contains all of the upper case
 characters:
 
 .. code-block:: php

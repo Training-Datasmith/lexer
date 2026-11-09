@@ -1,10 +1,13 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
+
 namespace Doctrine\Common\Lexer;
 
+use UnitEnum;
+
 use function in_array;
-use Unit_Enum;
+
 /**
  * @template T of UnitEnum|string|int
  * @template-covariant V of string|int|float|bool
@@ -33,10 +36,10 @@ final class Token
          *
          * @readonly
          */
-        public int $position
-    )
-    {
+        public int $position,
+    ) {
     }
+
     /** @param T ...$types */
     public function is_a(...$types): bool
     {
